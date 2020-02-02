@@ -8,8 +8,9 @@ public class User {
 	private String phone;
 	private String adress;
 	private String turn;
+	private boolean served;
 	
-	public User(String docType, String id, String name, String surname, String phone, String adress, String turn) {
+	public User(String docType, String id, String name, String surname, String phone, String adress, String turn, boolean served) {
 		this.docType = docType;
 		this.id = id;
 		this.name = name;
@@ -17,6 +18,7 @@ public class User {
 		this.phone = phone;
 		this.adress = adress;
 		this.turn = turn;
+		this.served = served;
 	}
 
 	public String getDocType() {
@@ -73,6 +75,19 @@ public class User {
 
 	public void setTurn(String turn) {
 		this.turn = turn;
+	}
+
+	public boolean wasServed() {
+		return served;
+	}
+
+	public void setServed(boolean served) {
+		this.served = served;
+	}
+
+	@Override
+	public String toString() {
+		return "" + docType + "	" + name + " " + surname + "	" + phone ;
 	}
 	
 	
