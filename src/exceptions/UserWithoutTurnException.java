@@ -1,9 +1,9 @@
 package exceptions;
 
-public class UserWithoutTurn extends Exception {
+public class UserWithoutTurnException extends Exception {
 	private String id;
 	
-	public UserWithoutTurn(String id) {
+	public UserWithoutTurnException(String id) {
 		super("The user with id: "+id+" does not have a turn\n");
 		this.id = id;
 	}

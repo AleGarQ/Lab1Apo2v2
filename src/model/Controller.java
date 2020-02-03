@@ -5,17 +5,22 @@ import java.util.ArrayList;
 import exceptions.AlreadyOnListException;
 import exceptions.EmptyFieldException;
 import exceptions.IsNotListedException;
-import exceptions.UserWithoutTurn;
+import exceptions.NoTurnsForAttendException;
+import exceptions.UserWithoutTurnException;
 
 public class Controller {
 	private ArrayList<User> users;
 	private String lastTurn;
 	private String actualTurn;
+	private int turnsGiven;
+	private int turnsAttended;
 	
-	public Controller() {
+	public Controller(String turnToStart) {
 		users = new ArrayList<User>();
 		lastTurn = "A0/";
-		actualTurn = "A00";
+		actualTurn = turnToStart;
+		turnsGiven = 0;
+		turnsAttended = 0;
 	}
 	
 	public void addUser(String doc, String id, String name, String surname, String phone, String adress) throws AlreadyOnListException, EmptyFieldException {
@@ -69,7 +74,7 @@ public class Controller {
 		return aux;
 	}
 	
-	public String getUserTurn(String id) throws IsNotListedException, UserWithoutTurn{
+	public String getUserTurn(String id) throws IsNotListedException, UserWithoutTurnException{
 		String info = null;
 		String turn = null;
 		
@@ -79,7 +84,7 @@ public class Controller {
 		}
 		
 		if(turn == null) {
-			throw new UserWithoutTurn(id);
+			throw new UserWithoutTurnException(id);
 		}
 			
 		return info + "		" + turn;
@@ -106,6 +111,7 @@ public class Controller {
 			units++;
 		}
 		lastTurn = ""+letter+tens+units;
+		turnsGiven++;
 		
 		if(searchUser(id) != null) {
 			searchUser(id).setTurn(lastTurn);
@@ -114,29 +120,55 @@ public class Controller {
 		return lastTurn;
 	}
 	
-	public String nextTurn() {
-		char letter = actualTurn.charAt(0);
-		char tens = actualTurn.charAt(1);
-		char units = actualTurn.charAt(2);
-		
-		if(units == '9') {
-			units = '0';
-			if(tens == '9') {
-				tens = '0';
-				if(letter == 90) {
-					letter = 65;
+	public String nextTurn() throws NoTurnsForAttendException{
+		if(turnsAttended < turnsGiven && turnsGiven != 0) {
+			char letter = actualTurn.charAt(0);
+			char tens = actualTurn.charAt(1);
+			char units = actualTurn.charAt(2);
+			
+			if(units == '9') {
+				units = '0';
+				if(tens == '9') {
+					tens = '0';
+					if(letter == 90) {
+						letter = 65;
+					}else {
+						letter++;
+					}
 				}else {
-					letter++;
+					tens++;
 				}
 			}else {
-				tens++;
+				units++;
 			}
+			actualTurn = ""+letter+tens+units;
+			turnsAttended++;
+		}else if(turnsGiven == 0){
+			throw new NoTurnsForAttendException("It was not possible to give next turn because there are not turns given.");
 		}else {
-			units++;
+			throw new NoTurnsForAttendException("The actual turn was given for no user.");
 		}
-		actualTurn = ""+letter+tens+units;
 		
-		return actualTurn;
+		return "The next turn is: "+actualTurn;
+	}
+	
+	public String getActualTurn() {
+		return "Actual turn is: "+actualTurn;
+	}
+	
+	public void setIfWasServed(int served) {
+		boolean found = false;
+		
+		for(int i = 0; i < users.size() && !found; i++) {
+			if(actualTurn.equalsIgnoreCase(users.get(i).getTurn())) {
+				if(served == 1) {
+					users.get(i).setServed(true);
+				}else {
+					users.get(i).setServed(false);
+				}
+				found = true;
+			}
+		}
 	}
 	
 	public void setTurnToUser(String id, String turn) throws IsNotListedException{
@@ -151,20 +183,6 @@ public class Controller {
 		
 		if(!found) {
 			throw new IsNotListedException(id);
-		}
-	}
-	
-	public void setIfWasServed(String turn, int selection) {
-		boolean found = false;
-		
-		for(int i = 0; i < users.size() && !found; i++) {
-			if(turn.equalsIgnoreCase(users.get(i).getTurn())) {
-				if (selection == 1) {
-					users.get(i).setServed(true);
-				}else {
-					users.get(i).setServed(false);
-				}
-			}
 		}
 	}
 }

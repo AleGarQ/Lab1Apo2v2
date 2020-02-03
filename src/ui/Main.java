@@ -9,14 +9,15 @@ import exceptions.AlreadyOnListException;
 import exceptions.EmptyFieldException;
 import exceptions.InvalidSelectionException;
 import exceptions.IsNotListedException;
-import exceptions.UserWithoutTurn;
+import exceptions.NoTurnsForAttendException;
+import exceptions.UserWithoutTurnException;
 
 public class Main {
 	private Controller system;
 	private Scanner scan;
 	
 	public Main() {
-		system = new Controller();
+		system = new Controller("A00");
 		scan = new Scanner(System.in);
 		showMenu();
 //		for (int i = 0; i < 2600; i++) {
@@ -81,7 +82,7 @@ public class Main {
 					try {
 						System.out.println("DT"+"	"+"Full  Name"+"		"+"Phone "+"		"+"Turn");
 						System.out.println(system.getUserTurn(id));
-					}catch(UserWithoutTurn e) {
+					}catch(UserWithoutTurnException e) {
 						System.out.println(system.searchUser(id).toString());
 						System.out.println("At this moment the user does not have turn.");
 						System.out.println("The turn given is: "+ system.giveTurn(id));
@@ -89,11 +90,28 @@ public class Main {
 					break;
 					
 				case 3:
-					
+					System.out.println(system.getActualTurn());
+					System.out.println("Choose an option(number):");
+					System.out.println("1. Turn attended (Give next)");
+					System.out.println("2. User is not here (Give next)");
+					int sSelection = scan.nextInt();
+					scan.nextLine();
+					if(sSelection == 1 || sSelection == 2) {
+						system.setIfWasServed(sSelection);
+						System.out.println("///////////////////////");
+						System.out.println(system.nextTurn());
+						System.out.println("///////////////////////");
+						System.out.println("Changes saved.");
+					}
 					break;
 					
 				case 4:
-					
+					System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+					System.out.println("***************************************\n");
+					System.out.println("   Thanks for use our app. Good bye!\n");
+					System.out.println("***************************************");
+					System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+					exit = true;
 					break;
 				default:
 					throw new InvalidSelectionException(selection);
@@ -112,7 +130,11 @@ public class Main {
 				System.out.println(e.getMessage());
 				System.out.println("Please choose a valid option.\n");
 			} catch (IsNotListedException e) {
-				
+				System.out.println(e.getMessage());
+				System.out.println("Please add him.\n");
+			} catch (NoTurnsForAttendException e) {
+				System.out.println(e.getMessage());
+				System.out.println("Wait for users to arrive");
 			}
 		}while(!exit);
 	}
