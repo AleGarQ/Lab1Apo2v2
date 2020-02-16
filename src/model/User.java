@@ -7,17 +7,16 @@ public class User {
 	private String surname;
 	private String phone;
 	private String adress;
-	private String turn;
+	private Turn turn;
 	private boolean served;
 	
-	public User(String docType, String id, String name, String surname, String phone, String adress, String turn, boolean served) {
+	public User(String docType, String id, String name, String surname, String phone, String adress, boolean served) {
 		this.docType = docType;
 		this.id = id;
 		this.name = name;
 		this.surname = surname;
 		this.phone = phone;
 		this.adress = adress;
-		this.turn = turn;
 		this.served = served;
 	}
 
@@ -25,55 +24,39 @@ public class User {
 		return docType;
 	}
 
-	public void setDocType(String docType) {
-		this.docType = docType;
-	}
-
 	public String getId() {
 		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public String getSurname() {
 		return surname;
-	}
-
-	public void setSurname(String surname) {
-		this.surname = surname;
 	}
 
 	public String getPhone() {
 		return phone;
 	}
 
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
-
 	public String getAdress() {
 		return adress;
 	}
 
-	public void setAdress(String adress) {
-		this.adress = adress;
-	}
-
+	@SuppressWarnings("finally")
 	public String getTurn() {
-		return turn;
+		String auxTurn = "";
+		try {
+			auxTurn = turn.getCode();
+		}catch(NullPointerException e) {
+			auxTurn = null;
+		}finally {
+			return auxTurn;
+		}
 	}
 
-	public void setTurn(String turn) {
+	public void setTurn(Turn turn) {
 		this.turn = turn;
 	}
 
@@ -85,9 +68,17 @@ public class User {
 		this.served = served;
 	}
 
+	@SuppressWarnings("finally")
 	@Override
 	public String toString() {
-		return "" + docType + "	" + name + " " + surname + "	" + phone ;
+		String info = null;
+		try {
+			info = "" + docType + "||	" + name + " " + surname + "||	" + phone + "||	" + turn.getCode();
+		} catch (NullPointerException e) {
+			info = "" + docType + "||	" + name + " " + surname + "||	" + phone + "||	" + null;
+		}finally {
+			return info;
+		}	
 	}
 	
 	
