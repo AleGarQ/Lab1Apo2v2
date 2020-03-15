@@ -254,7 +254,7 @@ public class Controller {
 
 		for (int i = 0; i < users.size(); i++) {
 			if(users.get(i).binarySearchTurn(code.toUpperCase())) {
-				writer.println(users.get(i));
+				writer.println(users.get(i).info());
 			}
 		}
 		
@@ -271,7 +271,7 @@ public class Controller {
 
 		for (int i = 0; i < users.size(); i++) {
 			if(users.get(i).binarySearchTurn(code.toUpperCase())) {
-				writer += ""+ users.get(i) +"\n";
+				writer += ""+ users.get(i).info() +"\n";
 			}
 		}
 		
